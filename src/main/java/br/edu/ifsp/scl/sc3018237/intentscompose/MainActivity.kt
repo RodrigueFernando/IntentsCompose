@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import br.edu.ifsp.scl.sc3018237.intentscompose.navigation.Screen
 import br.edu.ifsp.scl.sc3018237.intentscompose.ui.theme.IntentsComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -41,14 +42,14 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
-                    startDestination =  "home"
+                    startDestination = Screen.HomeScreen.route
                 ){
-                    composable("home") {
+                    composable(Screen.HomeScreen.route) {
                         HomeScreen(navController)
                     }
 
                     composable(
-                        "add_work/{textoParaEnviar}"
+                        "${Screen.AddWordScreen.route}/{textoParaEnviar}"
                     ) {
                         backStackEntry ->
                         val textoParaEnviar = backStackEntry.arguments?.getString("textoParaEnviar")?:""
@@ -71,6 +72,7 @@ fun HomeScreen(navController: NavController){
         .savedStateHandle
         .getStateFlow("novaPalavra","")
         .collectAsState()
+
     LaunchedEffect(novaPalavra) {
         if(novaPalavra.isNotEmpty()){
             stringAtual = if(stringAtual.isEmpty()){
@@ -97,7 +99,7 @@ fun HomeScreen(navController: NavController){
 
         Button(
             onClick = {
-                navController.navigate("add_work/$stringAtual")
+                navController.navigate( "${Screen.AddWordScreen.route}/$stringAtual")
 
             }
         ) {
