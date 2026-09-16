@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         backStackEntry ->
                         val textoParaEnviar = backStackEntry.arguments?.getString("textoParaEnviar")?:""
-                        AddWordScreen(textoParaEnviar)
+                        AddWordScreen(textoParaEnviar,navController)
                     }
                 }
             }
@@ -92,7 +92,7 @@ fun HomeScreen(navController: NavController){
 }
 
 @Composable
-fun AddWordScreen(textoParaEnviar: String) {
+fun AddWordScreen(textoParaEnviar: String, navController: NavController) {
 
     var novaPalavra by remember {
         mutableStateOf("")
@@ -121,6 +121,18 @@ fun AddWordScreen(textoParaEnviar: String) {
                 Text("Nova palavra")
             }
         )
+        Button(
+            onClick = {
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("novaPalavra",novaPalavra)
+                navController.popBackStack() //volta pra HomeScreen
+            }
+        ) {
+            Text(
+                text = "Concatenar"
+            )
+        }
     }
 }
 
