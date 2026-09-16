@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,6 +71,15 @@ fun HomeScreen(navController: NavController){
         .savedStateHandle
         .getStateFlow("novaPalavra","")
         .collectAsState()
+    LaunchedEffect(novaPalavra) {
+        if(novaPalavra.isNotEmpty()){
+            stringAtual = if(stringAtual.isEmpty()){
+                novaPalavra
+            }else{
+                "$stringAtual $novaPalavra"
+            }
+        }
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -83,6 +93,10 @@ fun HomeScreen(navController: NavController){
             label ={
                 Text("String atual")
             }
+        )
+        // TESTE: mostra a palavra que voltou
+        Text(
+            text = novaPalavra
         )
         Button(
             onClick = {
