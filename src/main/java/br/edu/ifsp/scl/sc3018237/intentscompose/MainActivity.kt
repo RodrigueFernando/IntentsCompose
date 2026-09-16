@@ -15,6 +15,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,11 +46,11 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(
-                        "add_work/{textToSend}"
+                        "add_work/{textoParaEnviar}"
                     ) {
                         backStackEntry ->
-                        val textToSend = backStackEntry.arguments?.getString("textToSend")?:""
-                        AddWordScreen(textToSend)
+                        val textoParaEnviar = backStackEntry.arguments?.getString("textoParaEnviar")?:""
+                        AddWordScreen(textoParaEnviar)
                     }
                 }
             }
@@ -56,7 +60,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun HomeScreen(navController: NavController){
-    val stringAtual = ""
+    var stringAtual = ""
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -88,12 +92,36 @@ fun HomeScreen(navController: NavController){
 }
 
 @Composable
-fun AddWordScreen(textToSend: String){
-    Text(
-        text = "Adicionar Palavra",
-        modifier = Modifier.fillMaxWidth().padding(top = 40.dp)
+fun AddWordScreen(textoParaEnviar: String) {
 
-    )
+    var novaPalavra by remember {
+        mutableStateOf("")
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedTextField(
+            value = textoParaEnviar,
+            onValueChange = {},
+            readOnly = true,
+            label = {
+                Text("String atual")
+            }
+        )
+
+        OutlinedTextField(
+            value = novaPalavra,
+            onValueChange = {
+                novaPalavra = it
+            },
+            label = {
+                Text("Nova palavra")
+            }
+        )
+    }
 }
 
 
