@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,7 +61,15 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun HomeScreen(navController: NavController){
-    var stringAtual = ""
+    var stringAtual by remember {
+        mutableStateOf("")
+    }
+
+    val novaPalavra by navController
+        .currentBackStackEntry!!
+        .savedStateHandle
+        .getStateFlow("novaPalavra","")
+        .collectAsState()
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp),
