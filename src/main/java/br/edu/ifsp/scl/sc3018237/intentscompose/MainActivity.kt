@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,8 +41,12 @@ class MainActivity : ComponentActivity() {
                         HomeScreen(navController)
                     }
 
-                    composable("add_work") {
-                        AddWordScreen()
+                    composable(
+                        "add_work/{textToSend}"
+                    ) {
+                        backStackEntry ->
+                        val textToSend = backStackEntry.arguments?.getString("textToSend")?:""
+                        AddWordScreen(textToSend)
                     }
                 }
             }
@@ -51,20 +56,24 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun HomeScreen(navController: NavController){
+    val stringAtual = ""
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-        Text(
-            text = "Home",
-            modifier = Modifier.padding(top = 40.dp)
+        OutlinedTextField(
+            value = stringAtual,
+            onValueChange = {},
+            readOnly = true,
+            label ={
+                Text("String atual")
+            }
         )
-
         Button(
             onClick = {
-                navController.navigate("add_work")
+                navController.navigate("add_work/$stringAtual")
 
             }
         ) {
@@ -79,12 +88,10 @@ fun HomeScreen(navController: NavController){
 }
 
 @Composable
-fun AddWordScreen(){
+fun AddWordScreen(textToSend: String){
     Text(
         text = "Adicionar Palavra",
         modifier = Modifier.fillMaxWidth().padding(top = 40.dp)
-
-
 
     )
 }
