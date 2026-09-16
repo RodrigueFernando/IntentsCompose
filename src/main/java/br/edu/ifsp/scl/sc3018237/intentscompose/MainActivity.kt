@@ -94,10 +94,7 @@ fun HomeScreen(navController: NavController){
                 Text("String atual")
             }
         )
-        // TESTE: mostra a palavra que voltou
-        Text(
-            text = novaPalavra
-        )
+
         Button(
             onClick = {
                 navController.navigate("add_work/$stringAtual")
@@ -110,7 +107,18 @@ fun HomeScreen(navController: NavController){
             )
 
         }
+
+        Button(
+            onClick = {
+                stringAtual = ""
+            }
+        ) {
+            Text(
+                text = "Reiniciar"
+            )
+        }
     }
+
 
 }
 
