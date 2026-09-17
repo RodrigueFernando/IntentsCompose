@@ -1,5 +1,6 @@
 package br.edu.ifsp.scl.sc3018237.intentscompose
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,8 +46,31 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = Screen.HomeScreen.route
                 ){
-                    composable(Screen.HomeScreen.route) {
-                        HomeScreen(navController)
+                    composable(Screen.HomeScreen.route) { backStackEntry ->
+                        val novaPalavra: String =
+                            backStackEntry.savedStateHandle.get<String>("novaPalavra") ?: ""
+
+                        val stringAtual =
+                            backStackEntry.savedStateHandle
+                                .get<String>("stringAtual") ?: ""
+
+                        val novoTexto = if (novaPalavra.isNotEmpty()) {
+                            if (stringAtual.isEmpty()) {
+                                novaPalavra
+                            } else {
+                                "$stringAtual $novaPalavra"
+                            }
+                        } else {
+                            stringAtual
+                        }
+
+                        backStackEntry.savedStateHandle.set("stringAtual", novoTexto)
+                        backStackEntry.savedStateHandle.set("novaPalavra", "")
+
+                        HomeScreen(
+                            navController = navController,
+                            stringAtual = novoTexto
+                        )
                     }
 
                     composable(
@@ -62,66 +87,70 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun HomeScreen(navController: NavController){
-    var stringAtual by remember {
-        mutableStateOf("")
-    }
+fun HomeScreen(navController: NavController, stringAtual: String) {
 
+/*
     val novaPalavra by navController
         .currentBackStackEntry!!
         .savedStateHandle
-        .getStateFlow("novaPalavra","")
+        .getStateFlow("novaPalavra", "")
         .collectAsState()
 
     LaunchedEffect(novaPalavra) {
-        if(novaPalavra.isNotEmpty()){
-            stringAtual = if(stringAtual.isEmpty()){
+
+        if (novaPalavra.isNotEmpty()) {
+
+            stringAtual = if (stringAtual.isEmpty()) {
                 novaPalavra
-            }else{
+            } else {
                 "$stringAtual $novaPalavra"
             }
+
+            navController.currentBackStackEntry!!
+                .savedStateHandle
+                .set("novaPalavra", "")
         }
     }
+ */
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-
     ) {
+
         OutlinedTextField(
             value = stringAtual,
             onValueChange = {},
             readOnly = true,
-            label ={
+            label = {
                 Text("String atual")
             }
         )
 
         Button(
             onClick = {
-                navController.navigate( "${Screen.AddWordScreen.route}/$stringAtual")
-
+                navController.navigate(
+                    "${Screen.AddWordScreen.route}/${Uri.encode(stringAtual)}"
+                )
             }
         ) {
             Text(
                 text = "Adicionar Palavra",
                 fontSize = 20.sp
             )
-
         }
 
         Button(
             onClick = {
-                stringAtual = ""
+                navController.currentBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("stringAtual", "")
+
             }
         ) {
-            Text(
-                text = "Reiniciar"
-            )
+            Text("Reiniciar")
         }
     }
-
-
 }
 
 @Composable
@@ -183,7 +212,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun HomeScreenPreview() {
     IntentsComposeTheme {
         val navController = rememberNavController()
-        HomeScreen(navController)
+        HomeScreen(navController, stringAtual = "")
     }
 }
 
